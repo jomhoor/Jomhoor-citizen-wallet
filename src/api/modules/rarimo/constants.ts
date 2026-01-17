@@ -12,8 +12,8 @@ export const RARIMO_CHAINS: Record<string, ChainInfo> = {
     chainName: 'Local Hardhat',
     chainSymbolImageUrl:
       'https://raw.githubusercontent.com/rarimo/js-sdk/2.0.0-rc.14/assets/logos/ra-dark-logo.png',
-    rpcEvm: 'http://127.0.0.1:8545',
-    explorerUrl: 'http://127.0.0.1:8545', // No explorer for local
+    rpcEvm: 'http://10.0.0.27:8545', // Mac's local IP - Android can't use localhost
+    explorerUrl: 'http://10.0.0.27:8545', // No explorer for local
   },
   [RarimoChains.Testnet]: {
     chainId: '7369',
