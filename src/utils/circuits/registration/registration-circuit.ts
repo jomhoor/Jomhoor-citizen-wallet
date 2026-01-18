@@ -240,16 +240,35 @@ export abstract class EPassportBasedRegistrationCircuit extends RegistrationCirc
         }
       }
 
+      // RSA-2048 SHA256 (sigType 1) - Most common globally
+      // Covers: USA, Canada, Mexico, most EU, UK, Australia, Japan, Korea, Singapore, Brazil, etc.
       if (unpaddedModulusHex.length === 512 && exponent === '10001' && hashAlgLen === 32) {
         return 1
       }
 
+      // RSA-4096 SHA256 (sigType 2) - Switzerland, newer EU passports, security-focused countries
       if (unpaddedModulusHex.length === 1024 && exponent === '10001' && hashAlgLen === 32) {
         return 2
       }
 
+      // RSA-2048 SHA1 (sigType 3) - Legacy passports, exp 65537
       if (unpaddedModulusHex.length === 512 && exponent === '10001' && hashAlgLen === 20) {
         return 3
+      }
+
+      // RSA-2048 SHA1 (sigType 6) - Legacy variant with exp 3 and AA support
+      if (unpaddedModulusHex.length === 512 && exponent === '3' && hashAlgLen === 20) {
+        return 6
+      }
+
+      // RSA-2048 SHA512 (sigType 15)
+      if (unpaddedModulusHex.length === 512 && exponent === '10001' && hashAlgLen === 64) {
+        return 15
+      }
+
+      // RSA-4096 SHA512
+      if (unpaddedModulusHex.length === 1024 && exponent === '10001' && hashAlgLen === 64) {
+        return 15
       }
 
       return 0
@@ -355,6 +374,10 @@ export abstract class EPassportBasedRegistrationCircuit extends RegistrationCirc
           return 22
         case secp192r1.CURVE.a:
           return 23
+        case secp224r1.CURVE.a:
+          return 24
+        case brainpoolP384r1.CURVE.a:
+          return 28
         default:
           throw new TypeError('Unsupported named curve in dg15PubKey')
       }

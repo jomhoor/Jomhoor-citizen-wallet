@@ -163,6 +163,7 @@ export class NoirLocalCircuitParams extends NoirCircuitParams {
 }
 
 const supportedNoirCircuits: NoirCircuitParams[] = [
+  // ========== LOCAL CIRCUITS ==========
   new NoirLocalCircuitParams(
     'queryIdentity_inid_ca',
     () => require('@assets/circuits/noir/query-identity/inid/byte_code.json'),
@@ -173,29 +174,42 @@ const supportedNoirCircuits: NoirCircuitParams[] = [
     () => require('@assets/circuits/noir/register/inid/byte_code.json'),
     5,
   ),
+
+  // ========== RSA-2048 SHA256 (sigType 1) - Most Common ==========
+  // Covers: USA, Canada, Mexico, most EU, UK, Australia, Japan, Korea, Singapore, Brazil, etc.
   new NoirCircuitParams(
-    'registerIdentity_26_512_3_3_336_248_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.15/registerIdentity_26_512_3_3_336_248_NA.json',
+    'registerIdentity_1_256_3_3_576_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_3_576_248_NA.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_2_256_3_6_336_264_21_2448_6_2008',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.3/registerIdentity_2_256_3_6_336_264_21_2448_6_2008.json',
+    'registerIdentity_1_256_3_4_336_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_4_336_232_NA.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_2_256_3_6_336_248_1_2432_3_256',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.3/registerIdentity_2_256_3_6_336_248_1_2432_3_256.json',
+    'registerIdentity_1_256_3_4_336_232_1_1480_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_4_336_232_1_1480_4_256.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_20_256_3_3_336_224_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.3/registerIdentity_20_256_3_3_336_224_NA.json',
+    'registerIdentity_1_256_3_4_336_232_1_1480_5_296',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_4_336_232_1_1480_5_296.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_10_256_3_3_576_248_1_1184_5_264',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.4/registerIdentity_10_256_3_3_576_248_1_1184_5_264.json',
+    'registerIdentity_1_256_3_4_336_248_1_560_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_4_336_248_1_560_4_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_4_336_248_1_1496_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_4_336_248_1_1496_4_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_4_576_232_1_1480_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.12-fix/registerIdentity_1_256_3_4_576_232_1_1480_3_256.json',
     5,
   ),
   new NoirCircuitParams(
@@ -203,41 +217,14 @@ const supportedNoirCircuits: NoirCircuitParams[] = [
     'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.4/registerIdentity_1_256_3_4_600_248_1_1496_3_256.json',
     5,
   ),
-  // TODO: implement me
-  new NoirCircuitParams('registerIdentity_21_256_3_3_336_232_NA', '', 5),
   new NoirCircuitParams(
-    'registerIdentity_21_256_3_4_576_232_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.5-fix/registerIdentity_21_256_3_4_576_232_NA.json',
+    'registerIdentity_1_256_3_5_336_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_5_336_232_NA.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_11_256_3_3_576_248_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.10-fix/registerIdentity_11_256_3_3_576_248_NA.json',
-    5,
-  ),
-  new NoirCircuitParams(
-    'registerIdentity_2_256_3_6_576_248_1_2432_3_256',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.6-fix/registerIdentity_2_256_3_6_576_248_1_2432_3_256.json',
-    5,
-  ),
-  new NoirCircuitParams(
-    'registerIdentity_3_512_3_3_336_264_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.6-fix/registerIdentity_3_512_3_3_336_264_NA.json',
-    5,
-  ),
-  new NoirCircuitParams(
-    'registerIdentity_14_256_3_3_576_240_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.8-fix/registerIdentity_14_256_3_3_576_240_NA.json',
-    5,
-  ),
-  new NoirCircuitParams(
-    'registerIdentity_14_256_3_4_576_248_1_1496_3_256',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.8-fix/registerIdentity_14_256_3_4_576_248_1_1496_3_256.json',
-    5,
-  ),
-  new NoirCircuitParams(
-    'registerIdentity_20_160_3_2_576_184_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.8-fix/registerIdentity_20_160_3_2_576_184_NA.json',
+    'registerIdentity_1_256_3_5_336_248_1_2120_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_5_336_248_1_2120_3_256.json',
     5,
   ),
   new NoirCircuitParams(
@@ -245,6 +232,51 @@ const supportedNoirCircuits: NoirCircuitParams[] = [
     'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.7-fix/registerIdentity_1_256_3_5_336_248_1_2120_4_256.json',
     5,
   ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_5_344_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_5_344_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_5_576_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.9-fix/registerIdentity_1_256_3_5_576_248_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_6_336_248_1_2432_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_6_336_248_1_2432_3_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_6_336_248_1_2744_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_6_336_248_1_2744_4_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_6_576_248_1_2432_5_296',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_6_576_248_1_2432_5_296.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_6_576_264_1_2448_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.9-fix/registerIdentity_1_256_3_6_576_264_1_2448_3_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_1_256_3_7_336_264_20_2760_6_2008',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_256_3_7_336_264_20_2760_6_2008.json',
+    5,
+  ),
+
+  // ========== RSA-2048 SHA160 (sigType 1 variant) ==========
+  new NoirCircuitParams(
+    'registerIdentity_1_160_3_3_576_200_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_1_160_3_3_576_200_NA.json',
+    5,
+  ),
+
+  // ========== RSA-4096 SHA256 (sigType 2) ==========
+  // Covers: Switzerland, newer EU passports, security-focused countries
   new NoirCircuitParams(
     'registerIdentity_2_256_3_4_336_232_1_1480_4_256',
     'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.7-fix/registerIdentity_2_256_3_4_336_232_1_1480_4_256.json',
@@ -256,48 +288,51 @@ const supportedNoirCircuits: NoirCircuitParams[] = [
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_20_256_3_5_336_248_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.11-fix/registerIdentity_20_256_3_5_336_248_NA.json',
+    'registerIdentity_2_256_3_4_336_248_22_1496_7_2408',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_2_256_3_4_336_248_22_1496_7_2408.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_24_256_3_4_336_248_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.11-fix/registerIdentity_24_256_3_4_336_248_NA.json',
+    'registerIdentity_2_256_3_5_336_248_22_1808_7_2408',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_2_256_3_5_336_248_22_1808_7_2408.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_6_160_3_3_336_216_1_1080_3_256',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.11-fix/registerIdentity_6_160_3_3_336_216_1_1080_3_256.json',
+    'registerIdentity_2_256_3_6_336_248_1_2432_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.3/registerIdentity_2_256_3_6_336_248_1_2432_3_256.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_11_256_3_5_576_248_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.12-fix/registerIdentity_11_256_3_5_576_248_NA.json',
+    'registerIdentity_2_256_3_6_336_264_1_2448_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_2_256_3_6_336_264_1_2448_3_256.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_14_256_3_4_336_232_1_1480_5_296',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.12-fix/registerIdentity_14_256_3_4_336_232_1_1480_5_296.json',
+    'registerIdentity_2_256_3_6_336_264_21_2448_6_2008',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.3/registerIdentity_2_256_3_6_336_264_21_2448_6_2008.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_1_256_3_4_576_232_1_1480_3_256',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.12-fix/registerIdentity_1_256_3_4_576_232_1_1480_3_256.json',
+    'registerIdentity_2_256_3_6_576_248_1_2432_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.6-fix/registerIdentity_2_256_3_6_576_248_1_2432_3_256.json',
+    5,
+  ),
+
+  // ========== RSA-2048 SHA1 (sigType 3) - Legacy ==========
+  // Covers: Older passport versions, countries slow to upgrade
+  new NoirCircuitParams(
+    'registerIdentity_3_160_3_3_336_200_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_3_160_3_3_336_200_NA.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_1_256_3_5_576_248_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.9-fix/registerIdentity_1_256_3_5_576_248_NA.json',
+    'registerIdentity_3_160_3_4_576_216_1_1512_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_3_160_3_4_576_216_1_1512_3_256.json',
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_20_160_3_3_576_200_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.9-fix/registerIdentity_20_160_3_3_576_200_NA.json',
-    5,
-  ),
-  new NoirCircuitParams(
-    'registerIdentity_23_160_3_3_576_200_NA',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.10-fix/registerIdentity_23_160_3_3_576_200_NA.json',
+    'registerIdentity_3_256_3_3_576_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_3_256_3_3_576_248_NA.json',
     5,
   ),
   new NoirCircuitParams(
@@ -306,8 +341,253 @@ const supportedNoirCircuits: NoirCircuitParams[] = [
     5,
   ),
   new NoirCircuitParams(
-    'registerIdentity_1_256_3_6_576_264_1_2448_3_256',
-    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.9-fix/registerIdentity_1_256_3_6_576_264_1_2448_3_256.json',
+    'registerIdentity_3_512_3_3_336_264_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.6-fix/registerIdentity_3_512_3_3_336_264_NA.json',
+    5,
+  ),
+
+  // ========== RSA Legacy SHA1 variants (sigType 4-8) ==========
+  new NoirCircuitParams(
+    'registerIdentity_6_160_3_3_336_216_1_1080_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.11-fix/registerIdentity_6_160_3_3_336_216_1_1080_3_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_7_160_3_3_336_216_1_1080_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_7_160_3_3_336_216_1_1080_3_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_8_160_3_3_336_216_1_1080_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_8_160_3_3_336_216_1_1080_3_256.json',
+    5,
+  ),
+
+  // ========== RSA-PSS 2048 (sigType 10) - exp 3, salt 32 ==========
+  new NoirCircuitParams(
+    'registerIdentity_10_256_3_3_576_248_1_1184_5_264',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.4/registerIdentity_10_256_3_3_576_248_1_1184_5_264.json',
+    5,
+  ),
+
+  // ========== RSA-PSS 2048 (sigType 11) - exp 65537, salt 32 ==========
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_2_336_216_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_2_336_216_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_3_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_3_336_248_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_3_576_240_1_864_5_264',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_3_576_240_1_864_5_264.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_3_576_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.10-fix/registerIdentity_11_256_3_3_576_248_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_3_576_248_1_1184_5_264',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_3_576_248_1_1184_5_264.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_4_336_232_1_1480_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_4_336_232_1_1480_4_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_4_576_248_1_1496_5_296',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_4_576_248_1_1496_5_296.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_4_584_248_1_1496_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_4_584_248_1_1496_4_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_5_576_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.12-fix/registerIdentity_11_256_3_5_576_248_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_5_576_248_1_1808_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_5_576_248_1_1808_4_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_5_576_248_1_1808_5_296',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_5_576_248_1_1808_5_296.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_5_576_264_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_5_576_264_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_11_256_3_5_584_264_1_2136_4_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_11_256_3_5_584_264_1_2136_4_256.json',
+    5,
+  ),
+
+  // ========== RSA-PSS 2048 (sigType 12) - exp 65537, salt 64 ==========
+  new NoirCircuitParams(
+    'registerIdentity_12_256_3_3_336_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_12_256_3_3_336_232_NA.json',
+    5,
+  ),
+
+  // ========== RSA-PSS 3072 (sigType 14) ==========
+  new NoirCircuitParams(
+    'registerIdentity_14_256_3_3_576_240_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.8-fix/registerIdentity_14_256_3_3_576_240_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_14_256_3_4_336_232_1_1480_5_296',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.12-fix/registerIdentity_14_256_3_4_336_232_1_1480_5_296.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_14_256_3_4_576_248_1_1496_3_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.8-fix/registerIdentity_14_256_3_4_576_248_1_1496_3_256.json',
+    5,
+  ),
+
+  // ========== RSA SHA512 (sigType 15) ==========
+  new NoirCircuitParams(
+    'registerIdentity_15_512_3_3_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_15_512_3_3_336_248_NA.json',
+    5,
+  ),
+
+  // ========== ECDSA secp256r1 (sigType 20) ==========
+  // Covers: Germany, some EU countries
+  new NoirCircuitParams(
+    'registerIdentity_20_160_3_2_576_184_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.8-fix/registerIdentity_20_160_3_2_576_184_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_20_160_3_3_576_200_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.9-fix/registerIdentity_20_160_3_3_576_200_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_20_256_3_3_336_224_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.3/registerIdentity_20_256_3_3_336_224_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_20_256_3_5_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.11-fix/registerIdentity_20_256_3_5_336_248_NA.json',
+    5,
+  ),
+
+  // ========== ECDSA brainpoolP256r1 (sigType 21) ==========
+  // Covers: Germany, EU BSI standard
+  new NoirCircuitParams(
+    'registerIdentity_21_256_3_3_336_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_21_256_3_3_336_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_21_256_3_3_576_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_21_256_3_3_576_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_21_256_3_4_576_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.5-fix/registerIdentity_21_256_3_4_576_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_21_256_3_5_576_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_21_256_3_5_576_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_21_256_3_7_336_264_21_3072_6_2008',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_21_256_3_7_336_264_21_3072_6_2008.json',
+    5,
+  ),
+
+  // ========== ECDSA secp192r1 (sigType 23) - Legacy ==========
+  new NoirCircuitParams(
+    'registerIdentity_23_160_3_3_576_200_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.10-fix/registerIdentity_23_160_3_3_576_200_NA.json',
+    5,
+  ),
+
+  // ========== ECDSA secp224r1 (sigType 24) ==========
+  new NoirCircuitParams(
+    'registerIdentity_24_256_3_4_336_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_24_256_3_4_336_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_24_256_3_4_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.11-fix/registerIdentity_24_256_3_4_336_248_NA.json',
+    5,
+  ),
+
+  // ========== ECDSA brainpoolP384r1 (sigType 25) ==========
+  new NoirCircuitParams(
+    'registerIdentity_25_384_3_3_336_232_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_25_384_3_3_336_232_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_25_384_3_3_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_25_384_3_3_336_248_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_25_384_3_3_336_264_1_2024_3_296',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_25_384_3_3_336_264_1_2024_3_296.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_25_384_3_4_336_264_1_2904_2_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_25_384_3_4_336_264_1_2904_2_256.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_25_384_3_5_576_248_20_3768_3_2008',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_25_384_3_5_576_248_20_3768_3_2008.json',
+    5,
+  ),
+
+  // ========== ECDSA brainpoolP512r1 (sigType 26) ==========
+  new NoirCircuitParams(
+    'registerIdentity_26_512_3_3_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v0.1.15/registerIdentity_26_512_3_3_336_248_NA.json',
+    5,
+  ),
+  new NoirCircuitParams(
+    'registerIdentity_26_512_3_3_336_264_1_1968_2_256',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_26_512_3_3_336_264_1_1968_2_256.json',
+    5,
+  ),
+
+  // ========== ECDSA secp521r1 (sigType 27) ==========
+  new NoirCircuitParams(
+    'registerIdentity_27_512_3_4_336_248_NA',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_27_512_3_4_336_248_NA.json',
+    5,
+  ),
+
+  // ========== ECDSA brainpoolP384r1 variant (sigType 28) ==========
+  new NoirCircuitParams(
+    'registerIdentity_28_384_3_3_576_264_24_2024_4_2792',
+    'https://storage.googleapis.com/rarimo-store/passport-zk-circuits-noir/v1.0.5/registerIdentity_28_384_3_3_576_264_24_2024_4_2792.json',
     5,
   ),
 ]

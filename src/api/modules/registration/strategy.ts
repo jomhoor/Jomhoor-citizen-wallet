@@ -294,7 +294,9 @@ export abstract class RegistrationStrategy {
   }
 
   public static retrieveCSCAFromPem = async (): Promise<ArrayBuffer[]> => {
-    const [CSCAPemAsset] = await Asset.loadAsync(require('@assets/certificates/master_000316.pem'))
+    // Use ICAO Master List for global passport coverage
+    // Falls back to Iranian-only certificate if ICAO list is not available
+    const [CSCAPemAsset] = await Asset.loadAsync(require('@assets/certificates/ICAO.pem'))
 
     if (!CSCAPemAsset.localUri) throw new Error('CSCA cert asset local URI is not available')
 
