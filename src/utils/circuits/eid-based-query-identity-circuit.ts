@@ -330,14 +330,20 @@ export class EIDBasedQueryIdentityCircuit {
     )
 
     const userDataEncoded = abiCode.encode(
-      ['uint256', 'uint256[]', 'tuple(uint256,uint256,uint256)'],
+      ['uint256', 'uint256[]', 'tuple(uint256,uint256,uint256,uint256)'],
       [
         proposalId,
         // votes mask
         votes.map(v => 1 << Number(v)),
-        // User payload: (nullifier, citizenship, timestampUpperbound)
+        // INIDUserData: (nullifier, citizenship, identityCreationTimestamp, personalNumber)
         // INID circuit outputs citizenship at index 6 (not 5) due to DG1 format differences
-        ['0x' + proof.pub_signals[0], '0x' + citizenshipValue, '0x' + proof.pub_signals[15]],
+        // personalNumber is signal[8]: pers_number * selector_bits[1] (non-zero when bit 16 set)
+        [
+          '0x' + proof.pub_signals[0],
+          '0x' + citizenshipValue,
+          '0x' + proof.pub_signals[15],
+          '0x' + proof.pub_signals[8],
+        ],
       ],
     )
 

@@ -81,6 +81,8 @@ export class NoirEIDRegistration extends RegistrationStrategy {
     console.log('[NoirEID] slaveCertSmtProof.root:', slaveCertSmtProof.root)
     console.log('[NoirEID] slaveCertSmtProof.siblings.length:', slaveCertSmtProof.siblings.length)
 
+    let currentSmtProof = slaveCertSmtProof
+
     if (!slaveCertSmtProof.existence) {
       opts?.onRegisterCertificate?.()
 
@@ -97,8 +99,7 @@ export class NoirEIDRegistration extends RegistrationStrategy {
       console.log('[NoirEID] After registration - existence:', updatedProof.existence)
       console.log('[NoirEID] After registration - root:', updatedProof.root)
 
-      // Update the proof with the new values
-      Object.assign(slaveCertSmtProof, updatedProof)
+      currentSmtProof = updatedProof
     }
 
     opts?.onGenerateProof?.()
@@ -107,8 +108,8 @@ export class NoirEIDRegistration extends RegistrationStrategy {
 
     const registrationProof = await circuit.prove({
       skIdentity: BigInt(`0x${privateKey}`),
-      icaoRoot: BigInt(slaveCertSmtProof.root),
-      inclusionBranches: slaveCertSmtProof.siblings.map(el => BigInt(el)),
+      icaoRoot: BigInt(currentSmtProof.root),
+      inclusionBranches: currentSmtProof.siblings.map(el => BigInt(el)),
     })
 
     const identityItem = new NoirEIDIdentity(eDocument, registrationProof)
@@ -128,11 +129,7 @@ export class NoirEIDRegistration extends RegistrationStrategy {
     // if (isPassportNotRegistered) {
 
     opts?.onRegister?.()
-    const registerCallData = await this.buildRegisterCallData(
-      identityItem,
-      slaveCertSmtProof,
-      false,
-    )
+    const registerCallData = await this.buildRegisterCallData(identityItem, currentSmtProof, false)
 
     await RegistrationStrategy.requestRelayerRegisterMethod(registerCallData)
     // }

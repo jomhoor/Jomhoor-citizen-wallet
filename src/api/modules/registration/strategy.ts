@@ -1,4 +1,4 @@
-import { buildCertTreeAndGenProof, parsePemString } from '@lukachi/rn-csca'
+import { buildCertTreeAndGenProof, buildCertTreeRoot, parsePemString } from '@lukachi/rn-csca'
 import {
   ECParameters,
   id_ecdsaWithSHA1,
@@ -145,6 +145,11 @@ export abstract class RegistrationStrategy {
     cert: ExtendedCertificate,
     masterCert: Certificate,
   ) => {
+    // DEBUG: Log the computed ICAO root
+    const computedRoot = buildCertTreeRoot(CSCABytes)
+    console.log('[ICAO DEBUG] Number of certificates:', CSCABytes.length)
+    console.log('[ICAO DEBUG] Computed ICAO root from rn-csca:', computedRoot)
+
     const inclusionProofSiblings = buildCertTreeAndGenProof(
       CSCABytes,
       AsnConvert.serialize(masterCert),
