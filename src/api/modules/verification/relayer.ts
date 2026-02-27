@@ -28,13 +28,14 @@ export const relayerVote = async (callDataHex: string, destinationContractAddres
     })
     console.log('[relayerVote] Success! tx_hash:', result.data)
     return result
-  } catch (error: any) {
-    console.log('[relayerVote] Error:', error.message)
-    console.log('[relayerVote] Response status:', error.response?.status)
-    console.log('[relayerVote] Response data:', JSON.stringify(error.response?.data))
+  } catch (error: unknown) {
+    const axiosErr = error as { message?: string; response?: { status?: number; data?: { errors?: { meta?: { error?: string; field?: string } }[] } } }
+    console.log('[relayerVote] Error:', axiosErr.message)
+    console.log('[relayerVote] Response status:', axiosErr.response?.status)
+    console.log('[relayerVote] Response data:', JSON.stringify(axiosErr.response?.data))
 
     // Check for "key already exists" error (double voting)
-    const errorData = error.response?.data
+    const errorData = axiosErr.response?.data
     if (errorData?.errors) {
       const errorMeta = errorData.errors[0]?.meta
       if (

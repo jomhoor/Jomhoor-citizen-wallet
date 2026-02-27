@@ -22,6 +22,7 @@ const secretEnvPath = path.resolve(__dirname, `.env.secrets.${APP_ENV}`)
 
 require('dotenv').config({
   path: [envPath, secretEnvPath],
+  override: true,
 })
 
 /**

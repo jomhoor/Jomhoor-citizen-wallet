@@ -1,6 +1,7 @@
 import { keccak256 } from 'ethers'
 
 import { RegistrationStrategy } from '@/api/modules/registration/strategy'
+import { PassportRegisteredWithAnotherPKError } from '@/store/modules/identity/errors'
 import { IdentityItem, NoirEIDIdentity } from '@/store/modules/identity/Identity'
 import { SparseMerkleTree } from '@/types/contracts/PoseidonSMT'
 import { Registration2 } from '@/types/contracts/Registration'
@@ -114,29 +115,41 @@ export class NoirEIDRegistration extends RegistrationStrategy {
 
     const identityItem = new NoirEIDIdentity(eDocument, registrationProof)
 
-    // const passportInfo = await identityItem.getPassportInfo()
+    const passportInfo = await identityItem.getPassportInfo()
 
-    // const currentIdentityKey = publicKeyHash
-    // const currentIdentityKeyHex = hexlify(currentIdentityKey)
+    const isPassportNotRegistered =
+      !passportInfo ||
+      passportInfo.passportInfo_.activeIdentity === RegistrationStrategy.ZERO_BYTES32_HEX
 
-    // const isPassportNotRegistered =
-    //   !passportInfo ||
-    //   passportInfo.passportInfo_.activeIdentity === RegistrationStrategy.ZERO_BYTES32_HEX
+    const pkIdentityHashForCheck = identityItem.pkIdentityHash.startsWith('0x')
+      ? identityItem.pkIdentityHash
+      : `0x${identityItem.pkIdentityHash}`
 
-    // const isPassportRegisteredWithCurrentPK =
-    //   passportInfo?.passportInfo_.activeIdentity === currentIdentityKeyHex
+    const isPassportRegisteredWithCurrentPK =
+      passportInfo?.passportInfo_.activeIdentity === pkIdentityHashForCheck
 
-    // if (isPassportNotRegistered) {
+    console.log(
+      '[NoirEID] passportInfo activeIdentity:',
+      passportInfo?.passportInfo_.activeIdentity,
+    )
+    console.log('[NoirEID] pkIdentityHash:', pkIdentityHashForCheck)
+    console.log('[NoirEID] isPassportNotRegistered:', isPassportNotRegistered)
+    console.log('[NoirEID] isPassportRegisteredWithCurrentPK:', isPassportRegisteredWithCurrentPK)
 
-    opts?.onRegister?.()
-    const registerCallData = await this.buildRegisterCallData(identityItem, currentSmtProof, false)
+    if (isPassportNotRegistered) {
+      opts?.onRegister?.()
+      const registerCallData = await this.buildRegisterCallData(
+        identityItem,
+        currentSmtProof,
+        false,
+      )
 
-    await RegistrationStrategy.requestRelayerRegisterMethod(registerCallData)
-    // }
-
-    // if (!isPassportRegisteredWithCurrentPK) {
-    //   throw new PassportRegisteredWithAnotherPKError()
-    // }
+      await RegistrationStrategy.requestRelayerRegisterMethod(registerCallData)
+    } else if (!isPassportRegisteredWithCurrentPK) {
+      throw new PassportRegisteredWithAnotherPKError()
+    } else {
+      console.log('[NoirEID] Passport already registered with current PK, skipping registration')
+    }
 
     return identityItem
   }

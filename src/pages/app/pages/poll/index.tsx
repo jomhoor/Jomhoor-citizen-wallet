@@ -37,7 +37,7 @@ import { QueryProofParams } from '@/utils/circuits/types/QueryIdentity'
 import PollStateScreen from './components/PollStateScreen'
 import { ZERO_DATE_HEX } from './constants'
 import { DecodedWhitelistData, ProposalMetadata } from './types'
-import { parseProposalFromContract } from './utils'
+import { decodeWhitelistData, parseProposalFromContract } from './utils'
 
 enum Screen {
   Questions = 'questions',
@@ -145,6 +145,15 @@ export default function PollScreen({ route }: AppStackScreenProps<'Poll'>) {
       }
 
       try {
+        // Check if the CID field contains inline JSON metadata (not an IPFS hash)
+        try {
+          const inlineMetadata = JSON.parse(parsedProposal.cid) as ProposalMetadata
+          console.log('[Poll] CID contains inline JSON metadata, using directly')
+          return inlineMetadata
+        } catch {
+          // Not JSON — treat as IPFS CID
+        }
+
         // Strip ipfs:// prefix if present
         const cleanCid = parsedProposal.cid.replace(/^ipfs:\/\//, '')
         const url = `${Config.IPFS_NODE_URL}/${cleanCid}`
@@ -262,11 +271,44 @@ export default function PollScreen({ route }: AppStackScreenProps<'Poll'>) {
         currentIdentity,
         proposalContract.contractInstance,
       )
-      const whitelistData = parsedProposal?.votingWhitelistData as DecodedWhitelistData
+      // Get whitelist data - prefer fresh decode from raw proposal to avoid stale cache issues
+      let whitelistData: DecodedWhitelistData
+      const cachedWhitelistData = parsedProposal?.votingWhitelistData
+      const rawWhitelistHex = parsedProposal?.rawProposal?.[2]?.[6]?.[0]?.toString()
+
+      if (rawWhitelistHex) {
+        // Always decode fresh from raw hex to avoid any serialization/cache issues with bigint
+        whitelistData = decodeWhitelistData(rawWhitelistHex)
+        console.log(
+          '[Poll] Fresh-decoded whitelist data from raw hex:',
+          JSON.stringify(whitelistData, (_, v) => (typeof v === 'bigint' ? v.toString() : v)),
+        )
+      } else if (cachedWhitelistData) {
+        whitelistData = cachedWhitelistData
+        console.log(
+          '[Poll] Using cached whitelist data (no raw hex available):',
+          JSON.stringify(whitelistData, (_, v) => (typeof v === 'bigint' ? v.toString() : v)),
+        )
+      } else {
+        throw new Error('No whitelist data available for this proposal')
+      }
+
+      // Diagnostic: verify selector value
+      const selectorValue = whitelistData.selector
       console.log(
-        '[Poll] Whitelist data:',
-        JSON.stringify(whitelistData, (_, v) => (typeof v === 'bigint' ? v.toString() : v)),
+        '[Poll] Selector diagnostic - value:',
+        String(selectorValue),
+        'type:',
+        typeof selectorValue,
+        'BigInt check:',
+        BigInt(selectorValue).toString(),
       )
+      if (BigInt(selectorValue) === 0n && rawWhitelistHex) {
+        console.warn(
+          '[Poll] WARNING: selector is 0 after decode! Raw hex:',
+          rawWhitelistHex.substring(0, 140),
+        )
+      }
 
       console.log('[Poll] Getting passport info...')
       const { timestamp, identityCounter } = await circuitParams.getPassportInfo()
@@ -302,7 +344,8 @@ export default function PollScreen({ route }: AppStackScreenProps<'Poll'>) {
       const selectorBit1Set = (selector & (1n << 16n)) !== 0n // Check if bit 1 (value 65536) is set
       console.log(
         '[Poll] Selector:',
-        selector,
+        selector.toString(),
+        'hex: 0x' + selector.toString(16),
         'bit 1 (citizenship_check) enabled:',
         selectorBit1Set,
       )
@@ -331,12 +374,16 @@ export default function PollScreen({ route }: AppStackScreenProps<'Poll'>) {
         String(now.getDate()).padStart(2, '0')
       console.log('[Poll] Using actual current date:', currentDateStr)
 
+      // Use the freshly decoded selector value (converted via BigInt for safety)
+      const selectorStr = BigInt(whitelistData.selector).toString()
+      console.log('[Poll] Final selector string for circuit:', selectorStr)
+
       const params: QueryProofParams = {
         eventId: String(eventId),
         eventData,
         identityCountUpper: String(identityCountUpper),
         timestampUpper: String(timestampUpper),
-        selector: String(whitelistData.selector),
+        selector: selectorStr,
         // Use ZERO_DATE for all date bounds = "no restriction" (Rarimo convention)
         // When both lower and upper bounds are ZERO_DATE, the circuit skips the check.
         // The contract also uses ZERO_DATE, so these must match exactly.

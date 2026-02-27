@@ -13,7 +13,21 @@ export const parseProposalFromContract = (
   const rawWhitelistData =
     votingWhitelistDataArray.length > 0 ? votingWhitelistDataArray[0].toString() : ''
 
+  console.log(
+    '[parseProposal] rawWhitelistData hex (first 140):',
+    rawWhitelistData.substring(0, 140),
+  )
+
   const votingWhitelistData = rawWhitelistData ? decodeWhitelistData(rawWhitelistData) : null
+
+  if (votingWhitelistData) {
+    console.log(
+      '[parseProposal] Decoded selector:',
+      String(votingWhitelistData.selector),
+      'type:',
+      typeof votingWhitelistData.selector,
+    )
+  }
 
   return {
     cid: proposal[2][4],
