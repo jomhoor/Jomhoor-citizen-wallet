@@ -13,6 +13,8 @@ import { authStore } from '@/store'
 import { localAuthStore } from '@/store/modules/local-auth'
 import { UiIcon } from '@/ui'
 
+import { useAgoraDeepLink } from '@/hooks/useAgoraDeepLink'
+
 import BottomTabBar from './components/BottomTabBarTabBar'
 import CompassScreen from './pages/compass'
 import DocumentScanScreen from './pages/document-scan'
@@ -116,6 +118,9 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
 export default function App(props: RootStackScreenProps<'App'>) {
   const isFirstEnter = localAuthStore.useLocalAuthStore(state => state.isFirstEnter)
   const logout = authStore.useLogout()
+
+  // Handle jomhoor://auth/agora?challenge=... deep links for desktop QR auth
+  useAgoraDeepLink()
 
   useLayoutEffect(() => {
     if (isFirstEnter) {
