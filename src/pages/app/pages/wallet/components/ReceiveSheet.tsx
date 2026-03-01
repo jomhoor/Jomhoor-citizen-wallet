@@ -21,9 +21,13 @@ const ReceiveSheet = forwardRef<ReceiveSheetRef>(function ReceiveSheet(_props, r
 
   const bottomSheet = useUiBottomSheet()
 
-  useImperativeHandle(ref, () => ({
-    present: () => bottomSheet.present(),
-  }), [bottomSheet])
+  useImperativeHandle(
+    ref,
+    () => ({
+      present: () => bottomSheet.present(),
+    }),
+    [bottomSheet],
+  )
 
   if (!address) return null
 
@@ -55,12 +59,7 @@ const ReceiveSheet = forwardRef<ReceiveSheetRef>(function ReceiveSheet(_props, r
             backgroundColor: '#FFFFFF',
           }}
         >
-          <QRCode
-            value={address}
-            size={180}
-            backgroundColor='#FFFFFF'
-            color='#000000'
-          />
+          <QRCode value={address} size={180} backgroundColor='#FFFFFF' color='#000000' />
         </View>
 
         {/* Address */}

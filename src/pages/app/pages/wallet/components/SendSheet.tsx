@@ -24,9 +24,13 @@ const SendSheet = forwardRef<SendSheetRef>(function SendSheet(_props, ref) {
   const [amount, setAmount] = useState('')
   const [isSending, setIsSending] = useState(false)
 
-  useImperativeHandle(ref, () => ({
-    present: () => bottomSheet.present(),
-  }), [bottomSheet])
+  useImperativeHandle(
+    ref,
+    () => ({
+      present: () => bottomSheet.present(),
+    }),
+    [bottomSheet],
+  )
 
   const handleSend = async () => {
     if (!wallet || !recipient || !amount) return
@@ -56,10 +60,7 @@ const SendSheet = forwardRef<SendSheetRef>(function SendSheet(_props, ref) {
     }
   }
 
-  const isValid =
-    recipient.length === 42 &&
-    recipient.startsWith('0x') &&
-    parseFloat(amount) > 0
+  const isValid = recipient.length === 42 && recipient.startsWith('0x') && parseFloat(amount) > 0
 
   return (
     <UiBottomSheet
@@ -68,10 +69,10 @@ const SendSheet = forwardRef<SendSheetRef>(function SendSheet(_props, ref) {
       enableDynamicSizing={false}
       snapPoints={['65%']}
     >
-      <BottomSheetView style={{ paddingBottom: insets.bottom + 16, paddingHorizontal: 24, paddingTop: 8, gap: 20 }}>
-        <Text className='typography-h6 text-textPrimary'>
-          Send {selectedChain.symbol}
-        </Text>
+      <BottomSheetView
+        style={{ paddingBottom: insets.bottom + 16, paddingHorizontal: 24, paddingTop: 8, gap: 20 }}
+      >
+        <Text className='typography-h6 text-textPrimary'>Send {selectedChain.symbol}</Text>
 
         <UiHorizontalDivider />
 
@@ -104,9 +105,10 @@ const SendSheet = forwardRef<SendSheetRef>(function SendSheet(_props, ref) {
                     className={isActive ? 'text-primaryMain' : 'text-textSecondary'}
                   />
                   <Text
-                    className={isActive
-                      ? 'typography-caption1 text-primaryMain'
-                      : 'typography-caption1 text-textSecondary'
+                    className={
+                      isActive
+                        ? 'typography-caption1 text-primaryMain'
+                        : 'typography-caption1 text-textSecondary'
                     }
                   >
                     {chain.symbol}
@@ -128,9 +130,10 @@ const SendSheet = forwardRef<SendSheetRef>(function SendSheet(_props, ref) {
             autoCorrect={false}
             style={{
               borderWidth: 1,
-              borderColor: recipient && !recipient.startsWith('0x')
-                ? palette.errorMain
-                : palette.componentPrimary,
+              borderColor:
+                recipient && !recipient.startsWith('0x')
+                  ? palette.errorMain
+                  : palette.componentPrimary,
               borderRadius: 16,
               paddingHorizontal: 16,
               paddingVertical: 14,

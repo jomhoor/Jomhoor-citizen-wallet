@@ -2,11 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, RefreshControl, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import {
-  fetchAllTransactions,
-  type TransactionRecord,
-  useEvmAddress,
-} from '@/helpers/evm-wallet'
+import { fetchAllTransactions, type TransactionRecord, useEvmAddress } from '@/helpers/evm-wallet'
 import type { AppTabScreenProps } from '@/route-types'
 import { cn, useAppPaddings, useBottomBarOffset } from '@/theme'
 import { UiCard, UiHorizontalDivider, UiIcon, UiScreenScrollable } from '@/ui'
@@ -60,7 +56,12 @@ export default function WalletScreen(_props: AppTabScreenProps<'Wallet'>) {
     return (
       <AppContainer>
         <View className={cn('flex flex-1 items-center justify-center gap-4 p-8')}>
-          <UiIcon libIcon='Ionicons' name='wallet-outline' size={48} className='text-textSecondary' />
+          <UiIcon
+            libIcon='Ionicons'
+            name='wallet-outline'
+            size={48}
+            className='text-textSecondary'
+          />
           <Text className='typography-subtitle3 text-center text-textSecondary'>
             No wallet available
           </Text>
@@ -76,9 +77,7 @@ export default function WalletScreen(_props: AppTabScreenProps<'Wallet'>) {
     <AppContainer>
       <UiScreenScrollable
         scrollViewProps={{
-          refreshControl: (
-            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-          ),
+          refreshControl: <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />,
           contentContainerStyle: {
             paddingHorizontal: paddings.left,
             paddingTop: insets.top + 16,

@@ -29,7 +29,13 @@ export const relayerVote = async (callDataHex: string, destinationContractAddres
     console.log('[relayerVote] Success! tx_hash:', result.data)
     return result
   } catch (error: unknown) {
-    const axiosErr = error as { message?: string; response?: { status?: number; data?: { errors?: { meta?: { error?: string; field?: string } }[] } } }
+    const axiosErr = error as {
+      message?: string
+      response?: {
+        status?: number
+        data?: { errors?: { meta?: { error?: string; field?: string } }[] }
+      }
+    }
     console.log('[relayerVote] Error:', axiosErr.message)
     console.log('[relayerVote] Response status:', axiosErr.response?.status)
     console.log('[relayerVote] Response data:', JSON.stringify(axiosErr.response?.data))

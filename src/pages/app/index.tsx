@@ -14,6 +14,7 @@ import { localAuthStore } from '@/store/modules/local-auth'
 import { UiIcon } from '@/ui'
 
 import BottomTabBar from './components/BottomTabBarTabBar'
+import CompassScreen from './pages/compass'
 import DocumentScanScreen from './pages/document-scan'
 import DocumentsScreen from './pages/documents'
 import PollScreen from './pages/poll'
@@ -65,6 +66,16 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <UiIcon libIcon='FontAwesome' name='list-ul' size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Compass'
+        component={CompassScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <UiIcon libIcon='Ionicons' name='compass-outline' size={size} color={color} />
           ),
         }}
       />

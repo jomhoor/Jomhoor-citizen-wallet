@@ -116,10 +116,7 @@ export function getRmoProvider(): JsonRpcProvider {
 }
 
 /** Fetch the native balance on a single chain, formatted in ether. */
-export async function fetchBalanceOnChain(
-  address: string,
-  chain: ChainInfo,
-): Promise<string> {
+export async function fetchBalanceOnChain(address: string, chain: ChainInfo): Promise<string> {
   const provider = getProvider(chain)
   const raw = await provider.getBalance(address)
   return formatEther(raw)
@@ -140,9 +137,7 @@ export async function fetchAllBalances(address: string): Promise<TokenBalance[]>
   )
 
   return results.map((r, i) =>
-    r.status === 'fulfilled'
-      ? r.value
-      : { chain: WALLET_CHAINS[i], balance: null, error: true },
+    r.status === 'fulfilled' ? r.value : { chain: WALLET_CHAINS[i], balance: null, error: true },
   )
 }
 
@@ -176,8 +171,7 @@ export async function fetchRecentTransactions(
   const startBlock = Math.max(0, latestBlock - maxBlocks + 1)
 
   // For Ethereum mainnet, only scan a handful of blocks to stay fast
-  const effectiveStart =
-    chain.id === 'ethereum' ? Math.max(0, latestBlock - 10) : startBlock
+  const effectiveStart = chain.id === 'ethereum' ? Math.max(0, latestBlock - 10) : startBlock
 
   const txs: TransactionRecord[] = []
 
@@ -229,9 +223,7 @@ export async function fetchRecentTransactions(
  * Fetch recent transactions across all wallet chains.
  * Results are merged and sorted by block number (newest first).
  */
-export async function fetchAllTransactions(
-  address: string,
-): Promise<TransactionRecord[]> {
+export async function fetchAllTransactions(address: string): Promise<TransactionRecord[]> {
   const results = await Promise.allSettled(
     WALLET_CHAINS.map(chain => fetchRecentTransactions(address, chain)),
   )

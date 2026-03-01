@@ -17,21 +17,13 @@ export default function ActionButtons({ onSendPress, onReceivePress }: ActionBut
 
   return (
     <View className='flex flex-row justify-center gap-6'>
-      <ActionItem
-        icon='arrow-up-circle-outline'
-        label='Send'
-        onPress={onSendPress}
-      />
+      <ActionItem icon='arrow-up-circle-outline' label='Send' onPress={onSendPress} />
       <ActionItem
         icon={isCopied ? 'checkmark-circle-outline' : 'copy-outline'}
         label={isCopied ? 'Copied!' : 'Copy'}
         onPress={() => copy(address)}
       />
-      <ActionItem
-        icon='qr-code-outline'
-        label='Receive'
-        onPress={onReceivePress}
-      />
+      <ActionItem icon='qr-code-outline' label='Receive' onPress={onReceivePress} />
     </View>
   )
 }
@@ -55,12 +47,7 @@ function ActionItem({
       style={{ opacity: disabled ? 0.4 : 1 }}
     >
       <View className='flex size-12 items-center justify-center rounded-full bg-primaryMain'>
-        <UiIcon
-          libIcon='Ionicons'
-          name={icon}
-          size={22}
-          className='text-baseWhite'
-        />
+        <UiIcon libIcon='Ionicons' name={icon} size={22} className='text-baseWhite' />
       </View>
       <Text className='typography-caption2 text-textSecondary'>{label}</Text>
     </Pressable>
