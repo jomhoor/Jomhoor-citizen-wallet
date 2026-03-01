@@ -1,5 +1,6 @@
 export * from './modules/auth'
 export * from './modules/identity'
+export * from './modules/language'
 export * from './modules/local-auth'
 export * from './modules/sample'
 export * from './modules/ui-preferences'

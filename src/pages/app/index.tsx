@@ -17,6 +17,7 @@ import BottomTabBar from './components/BottomTabBarTabBar'
 import CompassScreen from './pages/compass'
 import DocumentScanScreen from './pages/document-scan'
 import DocumentsScreen from './pages/documents'
+import HubScreen from './pages/hub'
 import PollScreen from './pages/poll'
 import ProfileScreen from './pages/profile'
 import ProposalsScreen from './pages/proposals'
@@ -54,8 +55,8 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
         component={DocumentsScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <UiIcon libIcon='Fontisto' name='passport-alt' size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <UiIcon libIcon='Fontisto' name='passport-alt' size={20} color={color} />
           ),
         }}
       />
@@ -64,8 +65,18 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
         component={ProposalsScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <UiIcon libIcon='FontAwesome' name='list-ul' size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <UiIcon libIcon='FontAwesome' name='list-ul' size={20} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Hub'
+        component={HubScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <UiIcon libIcon='Ionicons' name='chatbubbles-outline' size={20} color={color} />
           ),
         }}
       />
@@ -74,8 +85,8 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
         component={CompassScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <UiIcon libIcon='Ionicons' name='compass-outline' size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <UiIcon libIcon='Ionicons' name='compass-outline' size={20} color={color} />
           ),
         }}
       />
@@ -84,8 +95,8 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
         component={WalletScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <UiIcon libIcon='Ionicons' name='wallet-outline' size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <UiIcon libIcon='Ionicons' name='wallet-outline' size={20} color={color} />
           ),
         }}
       />
@@ -94,9 +105,7 @@ function AppTabs({}: AppStackScreenProps<'Tabs'>) {
         component={ProfileScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <UiIcon customIcon='userIcon' size={size} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <UiIcon customIcon='userIcon' size={20} color={color} />,
         }}
       />
     </Tab.Navigator>

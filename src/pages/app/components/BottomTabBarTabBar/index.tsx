@@ -36,7 +36,7 @@ export default function BottomTabBar({
 
           const routeIcon = descriptor.options.tabBarIcon?.({
             focused: isFocused,
-            size: 24,
+            size: 20,
             color: isFocused ? palette.textPrimary : palette.textSecondary,
           })
 
@@ -49,7 +49,7 @@ export default function BottomTabBar({
             >
               <View
                 className={cn(
-                  'flex size-[50] items-center justify-center rounded-full',
+                  'flex size-[42] items-center justify-center rounded-full',
                   isFocused && 'bg-backgroundContainer',
                 )}
               >
