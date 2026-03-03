@@ -1,536 +1,447 @@
 # Iranians.Vote Mobile App
 
-The official mobile app for [Iranians.Vote](https://iranians.vote) - a digital democracy platform enabling secure identity verification and voting using NFC document scanning and zero-knowledge proofs.
+The official mobile app for [Iranians.Vote](https://iranians.vote) — a digital democracy platform enabling secure identity verification and voting using NFC document scanning and zero-knowledge proofs on [Rarimo L2](https://rarimo.com/).
 
 **GitHub:** https://github.com/Iranians-Vote-Digital-Democracy/mobile-Iranians.vote
 
 ## Features
 
-- NFC-based passport/ID card scanning
-- Zero-knowledge proof identity verification
-- Secure voting on blockchain (Rarimo L2)
-- Privacy-preserving authentication
+- NFC-based passport and national ID card scanning
+- Zero-knowledge proof identity verification (Noir + Circom circuits)
+- Secure on-chain voting (Rarimo L2 blockchain)
+- Privacy-preserving — passport data never leaves the device
+- Agora deliberation integration
+
+## Quick Start
+
+```bash
+# 1. Clone (normal git clone hangs on LFS — use this instead)
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/Iranians-Vote-Digital-Democracy/mobile-Iranians.vote.git
+cd mobile-Iranians.vote
+git lfs pull
+
+# 2. Install
+corepack enable        # activates Yarn 4.5.0 via packageManager field
+yarn install
+
+# 3. Build & run (iOS — requires physical device)
+APP_ENV=production npx expo prebuild --clean
+# Open ios/IraniansVote.xcworkspace in Xcode → set your Development Team first!
+APP_ENV=production npx expo run:ios --device
+
+# 3. Build & run (Android)
+APP_ENV=production npx expo prebuild --clean
+APP_ENV=production npx expo run:android --device
+```
+
+> **iOS Simulator does NOT work** — the NFC `e-document` module requires a physical device.
+
+See the [Developer Setup Guide](./docs/DEVELOPER_SETUP_GUIDE.md) for the complete walkthrough including troubleshooting.
+
+---
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed on your machine:
-
-- **Node.js** (version >= 20.15.0)
-  - [Download Node.js](https://nodejs.org/en/download/) or use a version manager like [nvm](https://github.com/nvm-sh/nvm) for easy version management.
-
-- **Android Studio**
-  - [Download Android Studio](https://developer.android.com/studio/install) and install the latest stable version.
-  - Install the Android SDK and set up environment variables as per the [React Native environment setup guide](https://reactnative.dev/docs/environment-setup).
-
-- **Xcode** (for macOS users)
-  - Install from the [Mac App Store](https://apps.apple.com/us/app/xcode/id497799835?mt=12).
-  - Ensure command-line tools are installed by running:
-
-    ```bash
-    xcode-select --install
-    ```
-
-- **EAS CLI**
-  - Install globally using npm:
-
-    ```bash
-    npm install -g eas-cli
-    ```
-
-  - Refer to the [EAS CLI documentation](https://docs.expo.dev/eas-update/getting-started/) for more details.
-
-- **Fastlane**
-  - Install via RubyGems:
-
-    ```bash
-    sudo gem install fastlane -NV
-    ```
-
-  - See the [Fastlane getting started guide](https://docs.fastlane.tools/getting-started/ios/setup/) for configuration.
-
-- **Git LFS**
-  - Install Git LFS:
-
-    ```bash
-    brew install git-lfs
-    git lfs install
-    ```
-
-  - Visit the [Git LFS website](https://git-lfs.github.com/) for more information.
-
-- **Watchman** (required only for macOS or Linux users)
-  - Install via Homebrew:
-
-    ```bash
-    brew install watchman
-    ```
-
-## Expo Account Setup
-
-Create an account on [Expo](https://expo.dev/) if you haven't already.
-
-Login to your Expo account:
-
-```bash
-eas login
-```
-
-## Register Devices
-
-### Android
-
-- No additional requirements.
+| Tool     | Required Version | Install                                                     |
+| -------- | ---------------- | ----------------------------------------------------------- |
+| Node.js  | >= 20            | `brew install node` or [nvm](https://github.com/nvm-sh/nvm) |
+| Yarn     | 4.5.0 (auto)     | `corepack enable` — do NOT install Yarn globally            |
+| Git LFS  | latest           | `brew install git-lfs && git lfs install`                   |
+| Watchman | latest           | `brew install watchman`                                     |
 
 ### iOS
 
-- Enroll in the [Apple Developer Program](https://developer.apple.com/programs/enroll/).
-- Register your device with Expo:
+| Tool                    | Notes                                                 |
+| ----------------------- | ----------------------------------------------------- |
+| Xcode                   | 16+ from Mac App Store, plus `xcode-select --install` |
+| CocoaPods               | `sudo gem install cocoapods`                          |
+| Apple Developer Account | Required for physical device deployment ($99/year)    |
 
-  ```bash
-  eas device:create
-  ```
+### Android
 
-- Configure **Signing & Capabilities** with Xcode (optional, the CLI may prompt you to choose a signing team).
-- Enable **Developer Mode** on your iOS device.
+| Tool             | Notes                                              |
+| ---------------- | -------------------------------------------------- |
+| Android Studio   | Latest stable                                      |
+| Java 17          | `brew install --cask temurin@17` — **not** Java 21 |
+| Android SDK 35   | SDK Manager → SDK Platforms → Android 15           |
+| Android NDK 26.1 | SDK Manager → SDK Tools → NDK                      |
 
-## Configure App Identifiers and Package Names
+> **Java version matters:** Gradle 8.10.2 requires Java 17. If your default is Java 21+, set `JAVA_HOME`:
+>
+> ```bash
+> export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+> ```
 
-Follow the steps in the [env.js](./env.js) file to configure app identifiers, package names, and environment variables with `zod` validations.
+### For CI/CD and Cloud Builds Only
+
+These are **not** needed for local development:
+
+- **EAS CLI** — `npm install -g eas-cli` (only for `eas build` commands)
+- **Expo account** — `eas login` (only for EAS builds)
 
 ---
+
+## Cloning
+
+This repo uses **Git LFS** for large binary files (`.aar`, `.xcframework`, `.tflite`). A normal `git clone` will hang trying to download them during filtering.
+
+```bash
+# Correct way to clone
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/Iranians-Vote-Digital-Democracy/mobile-Iranians.vote.git
+cd mobile-Iranians.vote
+git lfs pull          # downloads ~214 MB
+```
+
+Verify LFS files downloaded correctly:
+
+```bash
+file modules/noir/android/libs/noir.aar
+# Expected: "Zip archive data"
+# If you see "ASCII text" → LFS pull failed, run git lfs pull again
+```
+
+> **SSH may not work** for this GitHub org. Use HTTPS if you get `Permission denied (publickey)`.
+
+### LFS-Tracked Files
+
+Three custom `.aar` files are tracked via LFS (defined in `.gitattributes`):
+
+| File                                                  | Size   | Purpose                     |
+| ----------------------------------------------------- | ------ | --------------------------- |
+| `modules/noir/android/libs/noir.aar`                  | 7.1 MB | Noir ZK proof generation    |
+| `modules/witnesscalculator/android/libs/RmoCalcs.aar` | 4.2 MB | Circuit witness calculation |
+| `modules/rapidsnark-wrp/android/libs/rapidsnark.aar`  | 1.0 MB | Groth16 prover              |
+
+**These are custom builds by the Rarimo team** with APIs that differ from public releases. Do NOT replace them with downloads from GitHub releases — they have incompatible method signatures.
+
+---
+
+## Environment
+
+Environment files are **already committed** to the repo — no setup needed:
+
+| File               | Environment | Chain ID | API                 |
+| ------------------ | ----------- | -------- | ------------------- |
+| `.env.development` | Testnet     | 7369     | staging relayer     |
+| `.env.staging`     | Staging     | 7369     | staging relayer     |
+| `.env.production`  | Mainnet     | 7368     | `api.iranians.vote` |
+
+The `APP_ENV` variable selects which file to load. It must be set when running any command:
+
+```bash
+APP_ENV=production npx expo prebuild --clean
+APP_ENV=production npx expo run:ios --device
+```
+
+> **Note:** Expo always logs `env: load .env.development .env` regardless of `APP_ENV`. This is Expo's own dotenv loader — our `env.js` correctly reads the `APP_ENV`-specific file.
 
 ### Environment Variables
 
-Create `.env`, `.env.development`, and `.env.production` files in the root directory and fill them with your public values.
-Here's an example of what your `.env` file might look like:
+All env vars are validated via Zod in [`env.js`](./env.js). Key variables:
 
-### !IMPORTANT!
+| Variable                                      | Description                                  |
+| --------------------------------------------- | -------------------------------------------- |
+| `EXPO_PUBLIC_RELAYER_API_URL`                 | Backend relayer URL                          |
+| `EXPO_PUBLIC_RMO_CHAIN_ID`                    | Rarimo chain ID (7368 mainnet, 7369 testnet) |
+| `EXPO_PUBLIC_REGISTRATION_CONTRACT_ADDRESS`   | Registration2 contract                       |
+| `EXPO_PUBLIC_STATE_KEEPER_CONTRACT_ADDRESS`   | StateKeeper contract                         |
+| `EXPO_PUBLIC_NOIR_ID_VOTING_CONTRACT`         | NoirIDVoting contract                        |
+| `EXPO_PUBLIC_PROPOSAL_STATE_CONTRACT_ADDRESS` | ProposalsState contract                      |
 
-These files are public and should not contain any sensitive data.
+### Adding New Environment Variables
 
-```env
-SOME_PUBLIC_KEY_1=some_public_value_1
-SOME_PUBLIC_KEY_2=some_public_value_2
-SOME_OTHER_VARIABLE=your-value
-```
+1. Add the `EXPO_PUBLIC_*` key to the appropriate `.env.*` files
+2. Add the Zod validation in `env.js` under the `client` or `buildTime` schema
+3. Add the mapping in the `_clientEnv` or `_buildTimeEnv` object in `env.js`
+4. Rebuild: `APP_ENV=<env> npx expo prebuild --clean`
 
-### Validating New Variables
+### Secrets
 
-In `env.js`, add your new variables with `zod` validations:
+For sensitive values (not committed), create:
 
-```javascript
-const client = z.object({
-  APP_ENV: z.enum(['development', 'staging', 'production']),
-  NAME: z.string(),
-  SCHEME: z.string(),
-  BUNDLE_ID: z.string(),
-  PACKAGE: z.string(),
-  VERSION: z.string(),
+- `.env.secrets.development`
+- `.env.secrets.production`
 
-  // ADD YOUR CLIENT ENV VARS HERE
-  SOME_PUBLIC_KEY_1: z.string(),
-  SOME_PUBLIC_KEY_2: z.string(),
-})
+These are gitignored. Use `getSecretWithSuffix()` in `env.js` to access them.
 
-const buildTime = z.object({
-  EXPO_ACCOUNT_OWNER: z.string(),
-  EAS_PROJECT_ID: z.string(),
-  // ADD YOUR BUILD TIME ENV VARS HERE
-  SOME_ANOTHER_PUBLIC_KEY: z.string(),
-})
-```
+### RPC URLs
 
-And get them:
+Blockchain RPC endpoints are in `src/api/modules/rarimo/constants.ts`:
 
-```javascript
-/**
- * @type {Record<keyof z.infer<typeof client> , unknown>}
- */
-const _clientEnv = {
-  APP_ENV,
-  NAME: NAME,
-  SCHEME: SCHEME,
-  BUNDLE_ID: withEnvSuffix(BUNDLE_ID),
-  PACKAGE: withEnvSuffix(PACKAGE),
-  VERSION: packageJSON.version,
+- Testnet: `https://l2.testnet.rarimo.com`
+- Mainnet: `https://l2.rarimo.com`
 
-  // ADD YOUR ENV VARS HERE TOO
-  SOME_PUBLIC_KEY_1: process.env.SOME_PUBLIC_KEY_1,
-  SOME_PUBLIC_KEY_2: process.env.SOME_PUBLIC_KEY_2,
-}
-
-/**
- * @type {Record<keyof z.infer<typeof buildTime> , unknown>}
- */
-const _buildTimeEnv = {
-  EXPO_ACCOUNT_OWNER,
-  EAS_PROJECT_ID,
-
-  // ADD YOUR ENV VARS HERE TOO
-  SOME_ANOTHER_PUBLIC_KEY: process.env.SOME_ANOTHER_PUBLIC_KEY,
-}
-```
-
-After adding new variables, restart the development server to apply changes.
-
-### Sensitive Data
-
-#### For local development:
-
-create `.env.secrets.development`, `.env.secrets.staging`, and `.env.secrets.production` and fill them with your sensitive values.
-
-Add them to `env.js` as you did with public values, but use `getSecretWithSuffix` method instead of using `process.env` straight.
-
-This would be enough to run the app locally with `yarn prebuild && yarn ios` or `yarn prebuild && yarn android`.
-
-If changes are not applied after modifying the `.env` files, try restart the development server or rebuild the project:
-
-`yarn start`
-
-#### For EAS Build:
-
-The .env files are not included in the eas build, no matter it local or not, so we added `.easignore`, which repeats `.gitignore` rules, except `.env.secrets` files, so they will be included in eas build archive.
-
-And that should be enough to build the app with `yarn prebuild:staging && yarn build:staging:ios && yarn build:staging:android`. (and `--local`)
-
-#### For CI/CD:
-
-As far as CI just triggers the build, make sure you have done EAS build preparations, published secrets and prepared credentials for your eas project.
-
-Then run:
-
-`yarn prepare-secrets`
-
-It will push secrets from `.env.secrets.*` files to the EAS servers secrets in a `${APP_ENV_UPPERCASE}_SECRET_KEY` format.
-
-Then make sure you have added all secrets keys to [eas-build](.github/actions/eas-build/action.yml) action.
-You just need the key name, e.g. `envkey_SECRET_KEY: DO_NOT_CHANGE` to pass expo config check, and the value will be taken from the EAS dashboard.
-
-That will be enough to run these workflows in repo actions.
-
-CONCLUSION:
-
-This will cover using secrets in `metro dev server`, local and local-triggered eas builds, and CI/CD triggered eas builds.
+For local Hardhat development, update the `rpcEvm` field to `http://<YOUR_MAC_IP>:8545`.
 
 ---
 
-## Development Process
+## Building & Running
 
-By default, this template has `development`, `staging`, and `production` environments. Each of them will create separate builds and allow you to set up multiple app variants on the same device.
-
-To configure your own custom environment, run scripts with the desired `APP_ENV` variable, and also set it up in the [eas.json](./eas.json) file.
-
-### Prebuild Native Code and Start Development Server
-
-You need to prebuild the native code before running the app:
+### iOS
 
 ```bash
-yarn prebuild
+APP_ENV=production npx expo prebuild --clean
+APP_ENV=production npx expo run:ios --device
 ```
 
-Then start the Metro development server:
+**First time only:** After `prebuild`, you must set your Apple Development Team:
+
+1. Open `ios/IraniansVote.xcworkspace` in Xcode
+2. Select **IraniansVote** target → **Signing & Capabilities**
+3. Check **Automatically manage signing**
+4. Select your **Team**
+
+After that, `expo run:ios --device` will work. See the [Developer Setup Guide](./docs/DEVELOPER_SETUP_GUIDE.md#6-ios-code-signing-critical-for-new-devs) for details.
+
+### Android
 
 ```bash
-yarn start
+APP_ENV=production npx expo prebuild --clean
+APP_ENV=production npx expo run:android --device
 ```
 
-### Run the App on Your Device or Emulator
+Make sure `JAVA_HOME` points to Java 17 (not 21).
 
-**iOS:**
+### Convenience Scripts
+
+| Script                     | Command                                        |
+| -------------------------- | ---------------------------------------------- |
+| `yarn prebuild`            | `npx expo prebuild --clean && npx pod-install` |
+| `yarn ios`                 | `npx expo run:ios --device`                    |
+| `yarn android`             | `npx expo run:android --device`                |
+| `yarn start`               | `npx expo start --clear`                       |
+| `yarn ios:production`      | `cross-env APP_ENV=production yarn ios`        |
+| `yarn android:production`  | `cross-env APP_ENV=production yarn android`    |
+| `yarn prebuild:production` | `cross-env APP_ENV=production yarn prebuild`   |
+
+> **Switching environments** requires `prebuild --clean` — native projects must be regenerated.
+
+---
+
+## Project Structure
+
+```
+├── abis/                    # Smart contract ABIs (JSON)
+├── assets/                  # Fonts, images, certificates, ZK circuits
+│   ├── certificates/        # CSCA certificate bundles (PEM)
+│   └── circuits/            # ZK circuit files (auth, registration, query)
+├── modules/                 # Native Expo modules
+│   ├── e-document/          # NFC passport/ID scanning (Swift + Kotlin)
+│   ├── noir/                # Noir ZK proof generation
+│   ├── rapidsnark-wrp/      # Groth16 prover (Circom circuits)
+│   └── witnesscalculator/   # Circuit witness calculation
+├── plugins/                 # Expo config plugins
+│   ├── withNfc.plugin/      # NFC entitlements
+│   └── withLocalAar.plugin.js  # Android AAR file configuration
+├── src/
+│   ├── api/                 # API clients, React Query, registration/voting logic
+│   ├── helpers/             # Contract factories, utility functions
+│   ├── pages/               # Screen components (auth/, app/, local-auth/)
+│   ├── store/               # Zustand stores (identity, wallet, auth)
+│   ├── types/               # TypeScript types + generated contract types
+│   ├── ui/                  # Reusable UI components (UiButton, UiCard, etc.)
+│   └── utils/               # ZK circuits, document parsing, crypto utilities
+├── .env.*                   # Environment configs (committed)
+├── app.config.ts            # Expo configuration
+└── env.js                   # Env var loading + Zod validation
+```
+
+### Key Directories
+
+- **`src/api/modules/registration/`** — Identity registration strategies (Circom vs Noir, passport vs ID card)
+- **`src/utils/circuits/`** — ZK circuit builders (registration + voting query proofs)
+- **`src/store/modules/identity/`** — Identity state management (scanned documents, ZK proofs)
+- **`src/types/contracts/`** — Auto-generated from ABIs — run `yarn generate:ethers-types` to regenerate
+
+---
+
+## Native Modules
+
+| Module              | iOS                           | Android                 | Purpose                     |
+| ------------------- | ----------------------------- | ----------------------- | --------------------------- |
+| `e-document`        | Swift (NFCPassportReader pod) | Kotlin                  | NFC passport/ID scanning    |
+| `noir`              | Swift (NoirSwift.xcframework) | Kotlin + noir.aar       | Noir ZK proof generation    |
+| `rapidsnark-wrp`    | Swift                         | Kotlin + rapidsnark.aar | Groth16 proving (Circom)    |
+| `witnesscalculator` | Swift                         | Kotlin + RmoCalcs.aar   | Circuit witness calculation |
+
+### E-Document Module
+
+To modify the build configuration, edit `modules/e-document/plugin/src/index.ts`, then compile:
 
 ```bash
-yarn ios
+cd modules/e-document/plugin && npx tsc
 ```
 
-**Android:**
+### File Paths in Native Modules
+
+Expo FileSystem returns URIs with `file://` prefix. Strip it before passing to native modules:
+
+```typescript
+const path = asset.localUri.replace('file://', '')
+```
+
+---
+
+## Branches
+
+| Branch         | Purpose                                             |
+| -------------- | --------------------------------------------------- |
+| `main`         | Latest stable release                               |
+| `feat/agora`   | Agora deliberation integration (active development) |
+| `feat/compass` | Political compass feature                           |
+| `feat/wallet`  | Wallet improvements                                 |
+| `NID`          | National ID card support                            |
+
+After cloning, switch to the active development branch:
 
 ```bash
-yarn android
+git checkout feat/agora
+git lfs pull
 ```
-
-**Note:** Ensure that you have a simulator or device connected.
-
-### IMPORTANT! IOS SIMULATOR NOT WORKS
-
-Due to `e-document` module, and `NFCPassportReader` pod limitations. The iOS build can't be run on the simulator. Please use a real device for testing.
-
-Or if you don't need this module, simply remove [e-document](modules/e-document) directory from the app, all imports and usages of this module, `extraPods` `NFCPassportReader` from [app.config.ts](app.config.ts) and then run the app on the simulator.
 
 ---
 
 ## Release Process
 
-By default, everything should be automated.
+### Version Bumping
 
-### Default Case
+Run the **New App Version** (`release.yml`) workflow in GitHub Actions, or locally:
 
-Let's assume you finish your feature branch.
+```bash
+yarn release    # uses release-it
+```
 
-1. **Create a Pull Request (PR):**
+This increments the version and pushes a tag.
 
-- GitHub Actions will lint and type-check your code.
+### Building for Distribution
 
-2. **Merge the PR:**
-
-- After merging, you have two options to release your app for internal distribution (QA):
-  - Select the **New App Version** workflow in GitHub Actions and choose the release type.
-  - Or run `yarn app-release` locally; it will do the same as the action above and push changes to trigger the next GitHub Actions.
-
-3. **Build and Publish the App:**
-
-- Run the `eas-build-qa` workflow; it will build and publish the app for internal distribution via EAS.
-
-4. **Production Release:**
-
-- The `Production` release works the same way by running the `eas-production-build` workflow.
-
-**Note:** This template doesn't submit the app to stores automatically. You should do it manually via the EAS dashboard or configure auto-submit in GitHub Actions. In that case, you need to check the EAS submit configuration and follow the steps from the [EAS Submit documentation](https://docs.expo.dev/submit/introduction/).
-
-### Important! Setup GitHub Actions
-
-Add the required secrets to your GitHub repository:
-
-- **`GH_TOKEN`**: A [GitHub Personal Access Token](https://github.com/settings/tokens) with `repo` and `workflow` scopes to allow GitHub Actions to interact with your repository.
-
-- **`EXPO_TOKEN`**: An Expo token to authenticate with EAS. Generate one [here](https://expo.dev/settings/access-tokens) with the necessary permissions.
-
-**Workflows:**
-
-The GitHub Actions workflows are defined in the `.github/workflows` directory:
-
-- **`new-app-version.yml`**: Handles incrementing the app version and pushing changes.
-- **`eas-build-qa.yml`**: Builds and publishes the app for internal distribution (QA).
-- **`eas-production-build.yml`**: Builds and publishes the app for production release.
-
-To customize the workflows, edit the YAML files as needed.
-
-**Permissions:**
-
-Ensure that GitHub Actions has the necessary permissions to run workflows. Check your repository settings under **Settings > Actions > General** and adjust the **Workflow permissions** accordingly.
-
-[//]: # 'TBD: GH BOT?'
-[//]: # 'TBD: EAS UPDATE?'
-[//]: # 'TBD: EAS SUBMIT?'
-
-### Second Important! EAS First Build
-
-Your first build should be done locally to generate the necessary credentials on the EAS servers.
-
-Run the prebuild and build commands locally for your environment (e.g., staging):
+**QA (internal distribution):**
 
 ```bash
 yarn prebuild:staging && yarn build:staging:ios
 yarn prebuild:staging && yarn build:staging:android
 ```
 
-During the build process, you may be prompted to log in to your Apple Developer account or provide Keystore information for Android. Follow the prompts to complete the setup.
+**Production:**
 
-These commands will:
+```bash
+yarn prebuild:production && yarn build:production:ios
+yarn prebuild:production && yarn build:production:android
+```
 
-- Generate native project files.
-- Build the app locally.
-- Upload credentials to EAS servers for future cloud builds.
+Add `--local` to build on your machine instead of EAS cloud.
 
-**Testing Release Builds Locally:**
+### First EAS Build
 
-To test release builds locally before merging to the main branch:
+The first build must be done locally to generate credentials:
 
 ```bash
 yarn prebuild:staging && yarn build:staging:ios --local
-yarn prebuild:staging && yarn build:staging:android --local
 ```
 
-This will create `.ipa` and `.apk` files in the root folder, which you can install on your device using [Expo's Orbit tool](https://docs.expo.dev/build/orbit/).
+You'll be prompted to sign in to Apple Developer / provide Android keystore info.
 
-### Third Important! Android QA Build
+### GitHub Actions Setup
 
-#### Updated: fixed by [this plugin](./plugins/withLocalAar.plugin.js), and not necessary anymore
+Add these secrets to the GitHub repository:
 
-Note:
-To know what to put instead of `my-module-with-lib` in `dirs project(':my-module-with-lib').projectDir.absolutePath + '/libs'`
+| Secret       | Purpose                                                                             |
+| ------------ | ----------------------------------------------------------------------------------- |
+| `GH_TOKEN`   | GitHub PAT with `repo` + `workflow` scopes                                          |
+| `EXPO_TOKEN` | Expo access token from [expo.dev/settings](https://expo.dev/settings/access-tokens) |
 
-you can run android project at the android studio e.g.
+Workflows in `.github/workflows/`:
+
+| Workflow          | File                 | Purpose                     |
+| ----------------- | -------------------- | --------------------------- |
+| New App Version   | `release.yml`        | Version bump + tag          |
+| QA Build          | `eas-build-qa.yml`   | Internal distribution build |
+| Production Build  | `eas-build-prod.yml` | Production release build    |
+| Lint & Type Check | `lint-ts.yml`        | PR checks                   |
+
+### Secrets for EAS Builds
 
 ```bash
-studio android
+yarn prepare-secrets    # pushes .env.secrets.* values to EAS dashboard
 ```
 
-config gradle plugin e.g. zulu 17 at this moment. And in logs you will see all modules names, including yours.
-that is the name you should use.
-
-Due to [this issue](https://github.com/expo/expo/issues/27985), building an `.apk` file directly may not be possible when using `*.aar` files. As a workaround, we'll build an `.aab` file and convert it to a universal `.apk` using `bundletool`.
-
-**Install Bundletool:**
-
-Download `bundletool.jar` from the [official GitHub repository](https://github.com/google/bundletool/releases/latest).
-
-Alternatively, install via Homebrew:
-
-```bash
-brew install bundletool
-```
-
-**Build and Convert the App Bundle:**
-
-1. **Build the `.aab` file:**
-
-   ```bash
-   yarn prebuild:staging && yarn build:staging:android --local
-   ```
-
-2. **Convert `.aab` to `.apk` using `bundletool`:**
-
-   ```bash
-   bundletool build-apks --bundle=app-release.aab --output=dist/app.apks --mode=universal
-   ```
-
-- Replace `app-release.aab` with the name of your generated AAB file.
-- The output `app.apks` file is actually a ZIP archive.
-
-3. **Extract the Universal APK:**
-
-   ```bash
-   unzip dist/app.apks -d dist
-   ```
-
-4. **Locate the `universal.apk` File:**
-
-- The `universal.apk` file inside the `dist` directory is the APK you can distribute to your QA team.
-
-**Note:** Ensure that you have Java installed on your machine, as `bundletool` requires it.
-
-**Distribute the APK:**
-
-- You can now share the `universal.apk` file with your QA team for testing.
-
-## Good to Know
-
-### Adding New Dependencies
-
-When you add a new dependency that requires native modules:
-
-1. **Update `app.config.ts`:**
-
-- Add any necessary configuration for the dependency.
-
-2. **Modify Native Code (if required):**
-
-- For iOS, update the `Podfile` or relevant files.
-- For Android, modify `build.gradle` or other necessary files.
-
-3. **Rebuild Native Code:**
-
-   ```bash
-   yarn prebuild
-   yarn ios    # or yarn android
-   ```
-
-**Note:** Always run `yarn prebuild` after adding dependencies that include native code to ensure that your native projects are updated.
-
-### Values & Values-Night
-
-Currently, there isn't a solution to keep the same assets with the same name in both `values` and `values-night` folders and use them from one entry point automatically.
-
-We need to keep both assets in different folders and use them separately in code.
-
-### Fetching Data from API
-
-It's better to create a function per endpoint and then use hooks like `useLoading` to handle the loading state in the component or use libraries like [React Query](https://react-query.tanstack.com/) for benefits like caching.
-
-### E-Document Module
-
-To modify the build configuration for the E-Document module, edit the plugin at [./modules/e-document/plugin/src/index.ts](./modules/e-document/plugin/src/index.ts) and then run `tsc` from `./modules/e-document/plugin` to compile the Expo plugin.
-
-### File Paths as Parameters to Native Modules
-
-If you get a file URI from the Expo FileSystem, don't forget to remove `file://` from the URI before passing it to functions in a native module.
-
-```typescript
-const zkProofBytes = await groth16ProveWithZKeyFilePath(
-  authWtns,
-  zkeyAsset.localUri.replace('file://', ''),
-)
-```
-
-For the release build, it's better to wrap the path string in native module functions:
-
-**Swift**
-
-```swift
-let path = URL(string: pathString)
-```
-
-**Android (Kotlin)**
-
-```kotlin
-val path = File(pathString)
-```
-
-## Troubleshooting
-
-### Error: `CommandError: Failed to build iOS project. "xcodebuild" exited with error code 65.`
-
-This usually happens when you add a new dependency to the project.
-
-**Solution:**
-
-1. Clean Xcode derived data:
-
-   ```bash
-   rm -rf ~/Library/Developer/Xcode/DerivedData
-   ```
-
-2. Remove cached files and reinstall dependencies:
-
-   ```bash
-   rm -rf node_modules yarn.lock package-lock.json android ios .expo
-   yarn install
-   ```
-
-3. Prebuild and install pods:
-
-   ```bash
-   npx expo prebuild --clean
-   npx pod-install
-   ```
-
-4. Run the app:
-
-   ```bash
-   npx expo run:ios --device
-   ```
-
-**One-liner Command:**
-
-```bash
-rm -rf ~/Library/Developer/Xcode/DerivedData && rm -rf node_modules yarn.lock package-lock.json android ios .expo && yarn && npx expo prebuild --clean && npx pod-install && npx expo run:ios --device
-```
-
-### Error: `Error: spawn ./gradlew EACCES`
-
-This error indicates a permission issue with Gradle wrapper scripts.
-
-**Solution:**
-
-- Grant execute permissions to Gradle wrapper scripts:
-
-  ```bash
-  chmod +x android/gradlew
-  ```
-
-### Debugging Tips
-
-- **Check Build Logs:**
-  - For iOS, open Xcode and check the build logs for more detailed error messages.
-  - For Android, use Android Studio's logcat to view logs.
-
-- **Clean Project:**
-  - Sometimes, cleaning the build folders helps resolve issues:
-
-    ```bash
-    cd android && ./gradlew clean
-    ```
+Then add secret keys to `.github/actions/eas-build/action.yml`. The EAS dashboard provides the values at build time.
 
 ---
 
-**Happy Coding!**
+## Troubleshooting
+
+### Clone hangs at "Filtering content"
+
+```bash
+# Cancel and re-clone with LFS deferred
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 <url>
+cd <repo> && git lfs pull
+```
+
+### "Signing for 'IraniansVote' requires a development team" (iOS)
+
+Open `ios/IraniansVote.xcworkspace` in Xcode → IraniansVote target → Signing & Capabilities → select your Team.
+
+### iOS Simulator doesn't work
+
+Expected — NFC module requires a physical device.
+
+### `xcodebuild` error code 65
+
+```bash
+rm -rf ~/Library/Developer/Xcode/DerivedData
+rm -rf node_modules android ios .expo
+yarn install
+npx expo prebuild --clean
+npx expo run:ios --device
+```
+
+### Android build fails with Java errors
+
+Gradle 8.10.2 requires Java 17:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+```
+
+### `noir.aar` errors (ClassNotFoundException, method mismatch)
+
+The `.aar` files are custom builds tracked via LFS. Verify they downloaded correctly:
+
+```bash
+file modules/noir/android/libs/noir.aar      # Must be "Zip archive data"
+wc -c modules/noir/android/libs/noir.aar      # Must be ~7,153,108 bytes
+```
+
+If they show as text files, run `git lfs pull`.
+
+### `APP_ENV` not taking effect
+
+Delete generated native projects and rebuild:
+
+```bash
+rm -rf ios android
+APP_ENV=<env> npx expo prebuild --clean
+```
+
+### `Error: spawn ./gradlew EACCES`
+
+```bash
+chmod +x android/gradlew
+```
+
+### Debugging
+
+- **iOS:** Open Xcode, check build logs
+- **Android:** Use Android Studio logcat, or `adb logcat`
+- **Metro:** `yarn start` for the dev server with hot reload
+
+---
+
+## Additional Resources
+
+- [Developer Setup Guide](./docs/DEVELOPER_SETUP_GUIDE.md) — Detailed from-scratch setup walkthrough
+- [Expo documentation](https://docs.expo.dev/)
+- [Rarimo documentation](https://docs.rarimo.com/)
+- [React Native docs](https://reactnative.dev/docs/getting-started)
