@@ -11,6 +11,7 @@ import {
   id_RSASSA_PSS,
   id_sha1WithRSAEncryption,
   id_sha256,
+  id_sha256WithRSAEncryption,
   id_sha384,
   id_sha384WithRSAEncryption,
   id_sha512,
@@ -127,6 +128,14 @@ export abstract class RegistrationStrategy {
         }
 
         throw new Error('Unsupported RSASSA-PSS parameters')
+      // WORKAROUND (March 2026): Rarimo mainnet has SHA1↔SHA256 RSA signers swapped.
+      // C_RSA_SHA1_2048 dispatcher's signer actually does SHA256 verification.
+      // C_RSA_2048 dispatcher's signer actually does SHA1 verification.
+      // So for sha256WithRSAEncryption we return 'SHA1' to hit the SHA256 signer.
+      // TODO: Remove this workaround once Rarimo fixes the signer assignment.
+      // See: check-all-dispatchers.js and verify-dispatcher-swap.js for on-chain proof.
+      case id_sha256WithRSAEncryption:
+        return 'SHA1'
       case id_ecdsaWithSHA256:
         return 'SHA2'
       case id_sha384WithRSAEncryption:
