@@ -2,11 +2,8 @@
 
 The official mobile app for [Iranians.Vote](https://iranians.vote) — a digital democracy platform enabling secure identity verification and voting using NFC document scanning and zero-knowledge proofs on [Rarimo L2](https://rarimo.com/).
 
-**GitHub:** https://github.com/Iranians-Vote-Digital-Democracy/mobile-Iranians.vote
-
-## Demo
-
-[Watch the MVP Demo](https://transcf.org/wp-content/uploads/2026/03/MVP-Jomhoor-Wallet.mp4)
+**GitHub:** https://github.com/Iranians-Vote-Digital-Democracy/mobile-Iranians.vote  
+**Watch the MVP** [Demo](https://transcf.org/wp-content/uploads/2026/03/MVP-Jomhoor-Wallet.mp4)
 
 ## Features
 
