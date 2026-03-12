@@ -1,4 +1,4 @@
-# Iranians.Vote Mobile App
+# Jomhoor Citizen Wallet
 
 The official mobile app for [Iranians.Vote](https://iranians.vote) — a digital democracy platform enabling secure identity verification and voting using NFC document scanning and zero-knowledge proofs on [Rarimo L2](https://rarimo.com/).
 
