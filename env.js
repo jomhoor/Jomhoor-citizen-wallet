@@ -99,6 +99,7 @@ const client = z.object({
 
   IPFS_NODE_URL: z.string(),
   POINTS_SVC_ID: z.string(),
+  AGORA_ORIGIN: z.string().url(),
 })
 
 const buildTime = z.object({
@@ -132,6 +133,7 @@ const _clientEnv = {
   NOIR_ID_VOTING_CONTRACT: process.env.EXPO_PUBLIC_NOIR_ID_VOTING_CONTRACT,
   POINTS_SVC_ID: process.env.EXPO_PUBLIC_POINTS_SVC_ID,
   IPFS_NODE_URL: process.env.EXPO_PUBLIC_IPFS_NODE_URL,
+  AGORA_ORIGIN: process.env.EXPO_PUBLIC_AGORA_ORIGIN,
 }
 
 /**

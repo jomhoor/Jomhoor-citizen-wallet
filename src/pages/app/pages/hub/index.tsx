@@ -4,21 +4,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { WebViewMessageEvent } from 'react-native-webview'
 import { WebView } from 'react-native-webview'
 
+import { Config } from '@/config'
 import type { AppTabScreenProps } from '@/route-types'
 import { identityStore, useAppLanguage, walletStore } from '@/store'
 import { cn, useBottomBarOffset } from '@/theme'
 
 import AppContainer from '../../components/AppContainer'
 
-/**
- * Agora Hub URL.
- * In local dev the Quasar frontend runs on the Mac's LAN IP so the
- * phone/simulator can reach it.  In production this will be the
- * deployed agora.jomhoor.org URL.
- *
- * TODO: move to Config / .env once deployed
- */
-const AGORA_ORIGIN = 'https://192.168.0.130:3200'
+const AGORA_ORIGIN = Config.AGORA_ORIGIN
 
 /**
  * PostMessage types exchanged between the Agora WebView and the

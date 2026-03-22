@@ -18,4 +18,5 @@ export const Config = {
 
   POINTS_SVC_ID: Env.POINTS_SVC_ID,
   IPFS_NODE_URL: Env.IPFS_NODE_URL,
+  AGORA_ORIGIN: Env.AGORA_ORIGIN,
 }

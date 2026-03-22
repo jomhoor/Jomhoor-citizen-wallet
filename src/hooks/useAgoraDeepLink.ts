@@ -18,16 +18,10 @@ import * as Linking from 'expo-linking'
 import { useEffect } from 'react'
 import { Alert } from 'react-native'
 
+import { Config } from '@/config'
 import { identityStore, walletStore } from '@/store'
 
-/**
- * Default API URL for Agora backend.
- * In production, the deep link QR code should include `apiBaseUrl` as a query
- * parameter. This fallback is for local development.
- *
- * TODO: move to Config / .env
- */
-const DEFAULT_AGORA_API_URL = 'http://192.168.0.130:8084'
+const DEFAULT_AGORA_API_URL = Config.AGORA_ORIGIN
 
 /**
  * Module-level set of URLs already handled. Survives component remounts
