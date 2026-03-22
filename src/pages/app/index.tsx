@@ -46,8 +46,8 @@ export default function App(props: RootStackScreenProps<'App'>) {
       <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name='Documents' component={DocumentsScreen} />
       <Stack.Screen name='Proposals' component={ProposalsScreen} />
-      <Stack.Screen name='Hub' component={HubScreen} />
-      <Stack.Screen name='Compass' component={CompassScreen} />
+      <Stack.Screen name='Hub' component={HubScreen} options={{ headerShown: false }} />
+      <Stack.Screen name='Compass' component={CompassScreen} options={{ headerShown: false }} />
       <Stack.Screen name='Wallet' component={WalletScreen} />
       <Stack.Screen name='Profile' component={ProfileScreen} />
       <Stack.Screen name='InviteOthers' component={InviteOthers} options={{ animation: 'fade' }} />

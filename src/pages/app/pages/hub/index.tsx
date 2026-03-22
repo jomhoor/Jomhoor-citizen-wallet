@@ -1,47 +1,23 @@
-import { useCallback, useRef, useState } from 'react'
-import { ActivityIndicator, Text, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useCallback } from 'react'
 import type { WebViewMessageEvent } from 'react-native-webview'
-import { WebView } from 'react-native-webview'
 
 import { Config } from '@/config'
 import type { AppTabScreenProps } from '@/route-types'
 import { identityStore, useAppLanguage, walletStore } from '@/store'
-import { cn, useBottomBarOffset } from '@/theme'
-
-import AppContainer from '../../components/AppContainer'
+import { UiDAppBrowser } from '@/ui'
 
 const AGORA_ORIGIN = Config.AGORA_ORIGIN
 
-/**
- * PostMessage types exchanged between the Agora WebView and the
- * Jomhoor native app for wallet-based authentication.
- *
- * Flow:
- * 1. Agora frontend (step3-wallet) sends WALLET_CHALLENGE_REQUEST
- *    with the challenge token it received from the backend.
- * 2. This handler extracts the user's wallet address and nationality
- *    from local stores, then calls the Agora submit endpoint.
- * 3. The Agora frontend polls verify-status and completes auth.
- * 4. Once verified, Agora sends WALLET_AUTH_COMPLETE as confirmation.
- */
 type AgoraMessage =
   | { type: 'WALLET_CHALLENGE_REQUEST'; challenge: string; apiBaseUrl?: string }
   | { type: 'WALLET_AUTH_COMPLETE'; success: boolean }
 
 export default function HubScreen(_props: AppTabScreenProps<'Hub'>) {
-  const insets = useSafeAreaInsets()
-  const bottomOffset = useBottomBarOffset()
-  const webViewRef = useRef<WebView>(null)
-  const [webViewReady, setWebViewReady] = useState(false)
   const appLanguage = useAppLanguage()
 
-  // ─── Wallet & Identity data for challenge submission ───────────────
   const publicKeyHash = walletStore.usePublicKeyHash()
   const identities = identityStore.useIdentityStore(s => s.identities)
 
-  // Derive wallet address (hex string) from the Poseidon hash of the
-  // BabyJubjub public key.  The hash is a 32-byte Uint8Array.
   const walletAddress = publicKeyHash
     ? '0x' +
       Array.from(publicKeyHash)
@@ -49,62 +25,39 @@ export default function HubScreen(_props: AppTabScreenProps<'Hub'>) {
         .join('')
     : null
 
-  // First registered identity's nationality (2-letter ISO code).
   const nationality =
     identities.length > 0 ? identities[0].document.personDetails.nationality : null
 
-  // ─── PostMessage handler ───────────────────────────────────────────
   const handleMessage = useCallback(
     async (event: WebViewMessageEvent) => {
       let msg: AgoraMessage
       try {
         msg = JSON.parse(event.nativeEvent.data) as AgoraMessage
       } catch {
-        return // ignore non-JSON messages
+        return
       }
 
       if (msg.type === 'WALLET_CHALLENGE_REQUEST') {
         const { challenge, apiBaseUrl } = msg
 
         if (!walletAddress) {
-          console.warn(
-            '[HubScreen] WALLET_CHALLENGE_REQUEST received but no wallet address available',
-          )
+          console.warn('[HubScreen] WALLET_CHALLENGE_REQUEST but no wallet address')
           return
         }
 
         const nat = nationality ?? 'IR'
-
-        // Auto-submit wallet credentials — no consent dialog needed since
-        // the user explicitly opened the Hub tab inside their own app.
-        // Only pseudonymous wallet ID + nationality are shared.
-
-        // Use the API base URL sent by the Agora frontend.
-        // In local dev the Quasar dev-server and the API run on different
-        // ports, so we must POST to the API directly.
-        // Falls back to AGORA_ORIGIN (works in production where nginx proxies).
         const submitUrl = apiBaseUrl
           ? `${apiBaseUrl}/api/v1/auth/wallet/submit`
           : `${AGORA_ORIGIN}/api/v1/auth/wallet/submit`
 
-        console.log(
-          '[HubScreen] Submitting wallet challenge:',
-          challenge.slice(0, 8) + '…',
-          'to',
-          submitUrl,
-        )
+        console.log('[HubScreen] Submitting wallet challenge:', challenge.slice(0, 8) + '…')
 
         try {
           const res = await fetch(submitUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              challenge,
-              walletAddress,
-              nationality: nat,
-            }),
+            body: JSON.stringify({ challenge, walletAddress, nationality: nat }),
           })
-
           const body = await res.json()
           console.log('[HubScreen] Challenge submit response:', body)
         } catch (err) {
@@ -117,11 +70,6 @@ export default function HubScreen(_props: AppTabScreenProps<'Hub'>) {
     [walletAddress, nationality],
   )
 
-  /**
-   * Tell the Agora frontend it's running inside Jomhoor so the
-   * embedded-browser guard is skipped, and sync the display language
-   * from the app's language store.
-   */
   const injectedScript = `
     (function() {
       window.__JOMHOOR__ = true;
@@ -131,44 +79,12 @@ export default function HubScreen(_props: AppTabScreenProps<'Hub'>) {
   `
 
   return (
-    <AppContainer>
-      <View
-        style={{
-          flex: 1,
-          paddingTop: insets.top,
-          paddingBottom: bottomOffset,
-        }}
-      >
-        {/* Loading overlay */}
-        {!webViewReady && (
-          <View
-            className={cn(
-              'absolute inset-0 z-10 flex items-center justify-center bg-backgroundPrimary',
-            )}
-          >
-            <ActivityIndicator size='large' />
-            <Text className='typography-body3 mt-3 text-textSecondary'>Loading Hub…</Text>
-          </View>
-        )}
-
-        <WebView
-          ref={webViewRef}
-          source={{ uri: AGORA_ORIGIN }}
-          injectedJavaScriptBeforeContentLoaded={injectedScript}
-          onMessage={handleMessage}
-          onLoadEnd={() => setWebViewReady(true)}
-          onError={syntheticEvent => {
-            const { nativeEvent } = syntheticEvent
-            console.warn('[HubScreen] WebView error:', nativeEvent.description)
-            setWebViewReady(true) // dismiss spinner even on error
-          }}
-          domStorageEnabled
-          javaScriptEnabled
-          setSupportMultipleWindows={false}
-          style={{ flex: 1, backgroundColor: '#111111' }}
-          allowsBackForwardNavigationGestures
-        />
-      </View>
-    </AppContainer>
+    <UiDAppBrowser
+      uri={AGORA_ORIGIN}
+      origin={AGORA_ORIGIN}
+      injectedJS={injectedScript}
+      onMessage={handleMessage}
+      loadingLabel='Loading Hub…'
+    />
   )
 }

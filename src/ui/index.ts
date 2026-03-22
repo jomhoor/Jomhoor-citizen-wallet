@@ -5,6 +5,7 @@ export { renderBackdrop, UiBottomSheet, useUiBottomSheet } from './UiBottomSheet
 export { UiButton } from './UiButton'
 export { default as UiCard } from './UiCard'
 // export * from './UiCollapse'
+export { UiDAppBrowser } from './UiDAppBrowser'
 // export * from './UiDropdown'
 export { default as UiHorizontalDivider } from './UiHorizontalDivider'
 export { default as UiIcon } from './UiIcon'
